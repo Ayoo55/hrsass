@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 export function login(data) {
+  // 返回一个promise对象
   return request({
     method: 'post',
     url: '/sys/login',
@@ -8,8 +9,11 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
-
+export function getUserInfo() {
+  return request({
+    method: 'get',
+    url: '/sys/profile'
+  })
 }
 
 export function logout() {

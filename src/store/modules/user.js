@@ -95,10 +95,11 @@
 //   actions
 // }
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
 const state = {
   // 设置token初始状态
-  token: getToken()
+  token: getToken(),
+  userInfo: {}
 }
 const mutations = {
   // 设置 token
@@ -114,12 +115,23 @@ const mutations = {
     state.token = null
     // 改变本地缓存
     removeToken()
+  },
+  setUserInfo(state, result) {
+    state.userInfo = result
+  },
+  removeUserInfo(state) {
+    state.userInfo = {}
   }
 }
 const actions = {
   async login(context, data) {
     const result = await login(data)
     context.commit('setToken', result)
+  },
+  async getUserInfo(context) {
+    const result = await getUserInfo()
+    context.commit('setUserInfo', result)
+    return result
   }
 }
 export default {

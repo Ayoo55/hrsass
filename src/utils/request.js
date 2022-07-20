@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '@/store'
 import { Message } from 'element-ui'
 // create an axios instance
 const service = axios.create({
@@ -6,7 +7,16 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000
 })
-service.interceptors.request.use()
+service.interceptors.request.use(config => {
+  if (store.getters.token) {
+    config.headers.Authorization = `Bearer ${store.getters.token}`
+  }
+  // config 一定要返回，不然会停在这里
+  return config
+},
+error => {
+  return Promise.reject(error)
+})
 // 相应拦截器
 service.interceptors.response.use(
   // 相应成功
