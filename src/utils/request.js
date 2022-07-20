@@ -12,11 +12,11 @@ service.interceptors.response.use(
   // 相应成功
   response => {
     // 结构三个数据，因为 axios 默认在数据外层加了 data
-    const { message, data, success } = response.data
+    const { success, message, data } = response.data
     // 如何 success 为true，说明响应成功，则返回响应的 data 数据
     if (success) {
       return data
-    } else { // success 为 fales，相应失败，则提示一个错误消息，并且promise.reject进入错误阶段
+    } else { // success 为 fales，响应失败，则提示一个错误消息，并且promise.reject进入错误阶段
       Message.error(message)
       return Promise.reject(new Error(message))
     }

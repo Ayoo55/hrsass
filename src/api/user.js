@@ -2,8 +2,8 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    method: postMessage,
-    path: '/sys/login',
+    method: 'post',
+    url: '/sys/login',
     data
   })
 }

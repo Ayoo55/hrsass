@@ -56,7 +56,8 @@
 
 <script>
 import { validMobile } from '@/utils/validate'
-
+// 引入 actions 辅助函数
+import { mapActions } from 'vuex'
 export default {
   name: 'Login',
   data() {
@@ -96,6 +97,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['user/login']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -107,21 +109,24 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
+      // 手动进行表单验证，比如用户直接点击回车或登录时，需要触发表单验证
+      this.$refs.loginForm.validate(async isOk => {
+        if (isOk) {
+          try {
+            this.loading = true
+            // 调用登录 actions
+            await this['user/login'](this.loginForm)
+            // 登录成功后，跳转页面
+            this.$router.push('/')
+          } catch (error) {
+            console.log(error)
+          } finally {
             this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+          }
         }
       })
     }
+
   }
 }
 </script>
