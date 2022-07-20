@@ -94,9 +94,39 @@
 //   mutations,
 //   actions
 // }
+import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login } from '@/api/user'
+const state = {
+  // 设置token初始状态
+  token: getToken() | null
+}
+const mutations = {
+  // 设置 token
+  setToken(state, token) {
+    // 改变vuex
+    state.token = token
+    // 改变本地缓存
+    setToken(token)
+  },
+  // 删除缓存
+  removeToken(state) {
+    // 改变vuex
+    state.token = null
+    // 改变本地缓存
+    removeToken()
+  }
+}
+const actions = {
+  async login(context, data) {
+    const result = await login(data)
+    if (result.data.success === true) {
+      context.commit('setToken', result.data.data)
+    }
+  }
+}
 export default {
   namespaced: true,
-  state: {},
-  mutations: {},
-  actions: {}
+  state,
+  mutations,
+  actions
 }
