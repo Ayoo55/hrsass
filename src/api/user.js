@@ -11,11 +11,13 @@ export function login(data) {
 
 export function getUserInfo() {
   return request({
-    method: 'get',
+    method: 'post',
     url: '/sys/profile'
   })
 }
 
-export function logout() {
-
+export function getUserDetailById(id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
 }

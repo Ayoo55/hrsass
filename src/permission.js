@@ -7,13 +7,19 @@ import 'nprogress/nprogress.css'
 
 const whiteList = ['/login', '/404']
 
-router.beforeEach(function(to, from, next) {
+router.beforeEach(async function(to, from, next) {
   NProgress.start()
   if (store.getters.token) {
     // 在有token的情况下，如果去登录页面，会跳转到主页
     if (to.path === '/login') {
       next('/')
     } else {
+      // 如果已有用户ID，则不需要再次获取用户信息
+      if (!store.state.user.userInfo.userId) {
+        // 如果没有用户ID，则调用store下的子模块的 actions，用 dispatch
+        await store.dispatch('user/getUserInfo')
+        console.log()
+      }
       next() // 直接放行
     }
   } else {
