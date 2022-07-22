@@ -4,7 +4,7 @@
       <!-- 组织架构内容 -->
       <!-- 头部 -->
       <el-card class="tree-card">
-        <TreeTools :tree-node="company" :is-root="true" />
+        <TreeTools :tree-node="company" :is-root="true" @addDepts="addDepts" />
 
         <!-- 树形结构 -->
         <el-tree :data="departs" :porps="defaultProps" :default-expand-all="true">
@@ -13,11 +13,12 @@
             slot-scope="{data}"
             :tree-node="data"
             @delDepts="getDepartments"
+            @addDepts="addDepts"
           />
         </el-tree>
       </el-card>
 
-      <AddDept />
+      <AddDept :show-dialog="showDialog" />
     </div>
   </div>
 </template>
@@ -40,7 +41,9 @@ export default {
       defaultProps: {
         label: 'name' // 表示 从这个属性显示内容
       },
-      company: { }
+      company: { },
+      showDialog: false,
+      node: null // 记录当前点击的node节点
     }
   },
   created() {
@@ -52,6 +55,10 @@ export default {
       const data = await getDepartments()
       this.company = { name: data.companyName, manager: '负责人' }
       this.departs = tranListToTreeData(data.depts, '')
+    },
+    addDepts(node) {
+      this.showDialog = true
+      this.node = node
     }
   }
 }

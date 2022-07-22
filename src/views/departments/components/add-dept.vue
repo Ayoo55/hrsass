@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 放置弹层组件 -->
-    <el-dialog title="新增部门" :visible="true">
+    <el-dialog title="新增部门" :visible="showDialog">
       <!-- 表单数据 -->
       <el-form label-width="120px">
         <el-form-item label="部门名称">
@@ -36,7 +36,12 @@ export default {
 
   components: {},
 
-  props: {},
+  props: {
+    showDialog: {
+      type: Boolean,
+      default: false
+    }
+  },
 
   data() {
     return {
