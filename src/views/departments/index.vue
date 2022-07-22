@@ -4,58 +4,12 @@
       <!-- 组织架构内容 -->
       <!-- 头部 -->
       <el-card class="tree-card">
-        <!-- 第一行felx布局 -->
-        <el-row type="flex" justify="space-between" align="middle" style="height:40px">
-          <!-- 第一列 -->
-          <el-col>江苏传智播客教育科技股份有限公司</el-col>
-          <!-- 第二列 -->
-          <el-col :span="4">
-            <!-- 第二列内容增加一个flex布局的行 -->
-            <el-row type="flex" justify="end">
-              <el-col>负责人</el-col>
-              <el-col>
-                <!-- 下拉操作 -->
-                <el-dropdown>
-                  <span class="el-dropdown-link">
-                    操作
-                    <i class="el-icon-arrow-down el-icon--right" />
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>添加子部门</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </el-col>
-            </el-row>
-          </el-col>
-        </el-row>
+        <TreeTools :tree-node="company" :is-root="true" />
 
         <!-- 树形结构 -->
         <el-tree :data="departs" :porps="defaultProps" :default-expand-all="true">
-          <el-row slot-scope="{ data }" type="flex" justify="space-between" align="middle" style="height:40px;width:100%">
-            <!-- 第一列 -->
-            <el-col>{{ data.name }}</el-col>
-            <!-- 第二列 -->
-            <el-col :span="4">
-              <!-- 第二列内容增加一个flex布局的行 -->
-              <el-row type="flex" justify="end">
-                <el-col>{{ data.manager }}</el-col>
-                <el-col>
-                  <!-- 下拉操作 -->
-                  <el-dropdown>
-                    <span class="el-dropdown-link">
-                      操作
-                      <i class="el-icon-arrow-down el-icon--right" />
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>添加子部门</el-dropdown-item>
-                      <el-dropdown-item>编辑部门</el-dropdown-item>
-                      <el-dropdown-item>删除部门</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </el-col>
-              </el-row>
-            </el-col>
-          </el-row>
+          <!-- slot-scope 插槽 -->
+          <TreeTools slot-scope="{data}" :tree-node="data" />
         </el-tree>
       </el-card>
     </div>
@@ -63,7 +17,11 @@
 </template>
 
 <script>
+import TreeTools from './components/tree-tools.vue'
 export default {
+  components: {
+    TreeTools
+  },
   data() {
     return {
       departs: [{ name: '总裁办', manager: '曹操', children: [{ name: '董事会', manager: '曹丕' }] },
@@ -71,7 +29,8 @@ export default {
         { name: '人事部', manager: '孙权' }],
       defaultProps: {
         label: 'name' // 表示 从这个属性显示内容
-      }
+      },
+      company: { name: '江苏传智播客教育科技股份有限公司', manager: '负责人' }
     }
   }
 }
