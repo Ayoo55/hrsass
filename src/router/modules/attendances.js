@@ -4,7 +4,7 @@ export default {
   name: 'attendances',
   component: Layout,
   children: [{
-    paht: '', // 二级路由的默认路由
+    path: '', // 二级路由的默认路由
     component: () => import('@/views/attendances'),
     meta: {
       title: '考勤'
