@@ -16,6 +16,8 @@
           />
         </el-tree>
       </el-card>
+
+      <AddDept />
     </div>
   </div>
 </template>
@@ -24,9 +26,11 @@
 import TreeTools from './components/tree-tools.vue'
 import { getDepartments } from '@/api/departments'
 import { tranListToTreeData } from '@/utils'
+import AddDept from './components/add-dept.vue'
 export default {
   components: {
-    TreeTools
+    TreeTools,
+    AddDept
   },
   data() {
     return {
