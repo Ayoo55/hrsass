@@ -18,6 +18,7 @@
 
 <script>
 import TreeTools from './components/tree-tools.vue'
+import { getDepartments } from '@/api/departments'
 export default {
   components: {
     TreeTools
@@ -30,7 +31,17 @@ export default {
       defaultProps: {
         label: 'name' // 表示 从这个属性显示内容
       },
-      company: { name: '江苏传智播客教育科技股份有限公司', manager: '负责人' }
+      company: { }
+    }
+  },
+  created() {
+    this.getDepartments()
+  },
+  methods: {
+    async getDepartments() {
+      const data = await getDepartments()
+      this.company = { name: data.companyName, manager: '负责人' }
+      console.log(data)
     }
   }
 }
