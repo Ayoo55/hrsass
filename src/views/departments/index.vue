@@ -18,7 +18,10 @@
         </el-tree>
       </el-card>
 
-      <AddDept :show-dialog="showDialog" />
+      <AddDept
+        :show-dialog="showDialog"
+        :tree-node="node"
+      />
     </div>
   </div>
 </template>
@@ -53,7 +56,7 @@ export default {
     // 获取企业的部门列表
     async getDepartments() {
       const data = await getDepartments()
-      this.company = { name: data.companyName, manager: '负责人' }
+      this.company = { name: data.companyName, manager: '负责人', id: '' }
       this.departs = tranListToTreeData(data.depts, '')
     },
     addDepts(node) {
