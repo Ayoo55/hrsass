@@ -115,3 +115,18 @@ export function param2Obj(url) {
   })
   return obj
 }
+// 处理组织架构数据，变成树形结构
+export function tranListToTreeData(list, rootValue) {
+  const arr = []
+  // 遍历列表
+  list.forEach(item => {
+    if (item.pid === rootValue) {
+      const children = tranListToTreeData(list, item.id)
+      if (children.length) {
+        item.children = children
+      }
+      arr.push(item)
+    }
+  })
+  return arr
+}
