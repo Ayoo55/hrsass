@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- 放置弹层组件 -->
-    <el-dialog title="新增部门" :visible="showDialog">
+    <el-dialog title="新增部门" :visible="showDialog" @close="btnCancel">
       <!-- 表单数据 -->
-      <el-form label-width="120px" :model="formDate" :rules="rules">
+      <el-form ref="deptForm" label-width="120px" :model="formDate" :rules="rules">
         <el-form-item label="部门名称" prop="name">
           <el-input v-model="formDate.name" style="width:80%" placeholder="1-50个字符" />
         </el-form-item>
@@ -24,8 +24,8 @@
       <!-- 确定/取消 -->
       <el-row slot="footer" type="flex" justify="center">
         <el-col :span="6">
-          <el-button type="primary" size="small">确定</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button type="primary" size="small" @click="btnOK">确定</el-button>
+          <el-button size="small" @click="btnCancel">取消</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+import { getDepartments, addDepartments } from '@/api/departments'
 import { getEmployeeSimple } from '@/api/employees'
 export default {
 
@@ -117,6 +117,22 @@ export default {
     async getEmployeeSimple() {
       this.peoples = await getEmployeeSimple()
       console.log(this.peoples)
+    },
+    async btnOK() {
+      // 点击确定，手动校验表单
+      this.$refs.deptForm.validate(async isOK => {
+        if (isOK) {
+          // 表单验证通过后，将表单数据添加到后端
+          await addDepartments({ ...this.formDate, pid: this.treeNode.id })
+          //   新增成功之后，调用告诉父组件，重新拉取数据
+          this.$emit('addDepts')
+          this.$emit('update:showDialog', false)
+        }
+      })
+    },
+    btnCancel() {
+      this.$refs.deptForm.resetFields()
+      this.$emit('update:showDialog', false)
     }
   }
 }
