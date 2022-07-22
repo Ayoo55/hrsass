@@ -10,15 +10,15 @@
         <el-col>{{ treeNode.manager }}</el-col>
         <el-col>
           <!-- 下拉菜单 element -->
-          <el-dropdown>
+          <el-dropdown @command="operateDepts">
             <span>
               操作<i class="el-icon-arrow-down" />
             </span>
             <!-- 下拉菜单 -->
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>添加子部门</el-dropdown-item>
-              <el-dropdown-item>编辑部门</el-dropdown-item>
-              <el-dropdown-item>删除部门</el-dropdown-item>
+              <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+              <el-dropdown-item command="edit">编辑部门</el-dropdown-item>
+              <el-dropdown-item command="del">删除部门</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { delDepartments } from '@/api/departments'
 export default {
 
   name: 'TreeTools',
@@ -57,7 +58,23 @@ export default {
 
   created() {},
 
-  methods: {}
+  methods: {
+    operateDepts(type) {
+      if (type === 'add') {
+        console.log('add')
+      } else if (type === 'edit') {
+        console.log('edit')
+      } else {
+        this.$confirm('确定要删除该部门吗？').then(() => {
+          return delDepartments(this.treeNode.id)
+        }).then(() => {
+          //  如果删除成功了  就会进入这里
+          this.$emit('delDepts') // 触发自定义事件
+          this.$message.success('删除部门成功')
+        })
+      }
+    }
+  }
 }
 </script>
 <style scoped>

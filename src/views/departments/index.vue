@@ -9,7 +9,11 @@
         <!-- 树形结构 -->
         <el-tree :data="departs" :porps="defaultProps" :default-expand-all="true">
           <!-- slot-scope 插槽 -->
-          <TreeTools slot-scope="{data}" :tree-node="data" />
+          <TreeTools
+            slot-scope="{data}"
+            :tree-node="data"
+            @delDepts="getDepartments"
+          />
         </el-tree>
       </el-card>
     </div>
@@ -39,6 +43,7 @@ export default {
     this.getDepartments()
   },
   methods: {
+    // 获取企业的部门列表
     async getDepartments() {
       const data = await getDepartments()
       this.company = { name: data.companyName, manager: '负责人' }
