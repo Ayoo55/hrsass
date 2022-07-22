@@ -7,7 +7,8 @@ export default {
     path: '', // 二级路由的默认路由
     component: () => import('@/views/attendances'),
     meta: {
-      title: '考勤'
+      title: '考勤',
+      icon: 'skill'
     }
   }]
 }
