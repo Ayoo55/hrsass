@@ -11,7 +11,10 @@
           <el-input v-model="formDate.code" style="width:80%" placeholder="1-50个字符" />
         </el-form-item>
         <el-form-item label="部门负责人" prop="manager">
-          <el-input v-model="formDate.manager" style="width:80%" placeholder="请选择" />
+          <el-select v-model="formDate.manager" style="width:80%" placeholder="请选择" @focus="getEmployeeSimple">
+            <!-- 需要循环生成选项   这里做一下简单的处理 显示的是用户名 存的也是用户名-->
+            <el-option v-for="item in peoples" :key="item.id" :label="item.username" :value="item.username" />
+          </el-select>
         </el-form-item>
         <el-form-item label="部门介绍" prop="introduce">
           <el-input v-model="formDate.introduce" style="width:80%" placeholder="1-300个字符" type="textarea" :rows="3" />
@@ -31,6 +34,7 @@
 
 <script>
 import { getDepartments } from '@/api/departments'
+import { getEmployeeSimple } from '@/api/employees'
 export default {
 
   name: 'AddDept',
@@ -97,7 +101,8 @@ export default {
         manager: [{ required: true, message: '部门负责人不能为空', trigger: 'blur' }],
         introduce: [{ required: true, message: '部门介绍不能为空', trigger: 'blur' },
           { trigger: 'blur', min: 1, max: 300, message: '部门介绍要求1-50个字符' }]
-      }
+      },
+      peoples: []
     }
   },
 
@@ -107,7 +112,13 @@ export default {
 
   created() {},
 
-  methods: {}
+  methods: {
+    // 获取员工的简单列表
+    async getEmployeeSimple() {
+      this.peoples = await getEmployeeSimple()
+      console.log(this.peoples)
+    }
+  }
 }
 </script>
 <style lang='less' scoped>
