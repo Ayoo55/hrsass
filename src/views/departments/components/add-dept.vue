@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 放置弹层组件 -->
-    <el-dialog title="新增部门" :visible="showDialog" @close="btnCancel">
+    <el-dialog :title="formDate.id?'编辑部门':'新增部门'" :visible="showDialog" @close="btnCancel">
       <!-- 表单数据 -->
       <el-form ref="deptForm" label-width="120px" :model="formDate" :rules="rules">
         <el-form-item label="部门名称" prop="name">
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getDepartments, addDepartments, getDepartDetail } from '@/api/departments'
+import { getDepartments, addDepartments, getDepartDetail, updateDepartments } from '@/api/departments'
 import { getEmployeeSimple } from '@/api/employees'
 export default {
 
@@ -57,9 +57,17 @@ export default {
     const checkNameRepeat = async(rule, value, callback) => {
       // 获取最新的部门列表
       const { depts } = await getDepartments()
+      let isRepeat = false
+      if (this.formDate.id) {
+        // 处于编辑状态,获取的数据中有自身，所以要排除
+        // 同级部门下不能有同名，
+        isRepeat = depts.filter(item => item.pid === this.treeNode.id && item.id !== this.treeNode.id).some(item => item.name === value)
+      } else {
+        // 新增状态
+        isRepeat = depts.filter(item => item.pid === this.treeNode.id).some(item => item.name === value)
+      }
       //   filter 得出当前部门的所有同级部门
       //  some 遍历所有当前同级部门的名字是否与 value 相同，有任意一个相同则返回true
-      const isRepeat = depts.filter(item => item.pid === this.treeNode.id).some(item => item.name === value)
       //   isRepeat 如果为 true，则表明同名
       isRepeat ? callback(new Error((`同级部门下已经有${value}的部门了`))) : callback
     }
@@ -67,7 +75,16 @@ export default {
     const checkCodeRepeat = async(rule, value, callback) => {
       // 先要获取最新的组织架构数据
       const { depts } = await getDepartments()
-      const isRepeat = depts.some(item => item.code === value && value) // 这里加一个 value不为空 因为我们的部门有可能没有code
+      let isRepeat = false
+      if (this.formDate.id) {
+        // 处于编辑状态,获取的数据中有自身，所以要排除
+        // 同级部门下不能有同名，
+        isRepeat = depts.filter(item => item.id !== this.formDate.id).some(item => item.code === value && value)
+      } else {
+        // 新增状态
+        isRepeat = depts.some(item => item.code === value && value) // 这里加一个 value不为空 因为我们的部门有可能没有code
+      }
+
       isRepeat ? callback(new Error(`组织架构中已经有部门使用${value}编码`)) : callback()
     }
     return {
@@ -124,7 +141,12 @@ export default {
       this.$refs.deptForm.validate(async isOK => {
         if (isOK) {
           // 表单验证通过后，将表单数据添加到后端
-          await addDepartments({ ...this.formDate, pid: this.treeNode.id })
+          if (this.formDate.id) {
+            // 如果处于编辑状态，则修改接口数据，传入表单内容
+            await updateDepartments(this.formDate)
+          } else {
+            await addDepartments({ ...this.formDate, pid: this.treeNode.id })
+          }
           //   新增成功之后，调用告诉父组件，重新拉取数据
           this.$emit('addDepts')
           this.$emit('update:showDialog', false)
@@ -133,6 +155,13 @@ export default {
     },
     // 取消
     btnCancel() {
+    //    el-form中的resetFields不能重置非表单中的数据，所以在取消的位置需要强制加上 重置数据
+      this.formDate = {
+        name: '',
+        code: '',
+        manager: '',
+        introduce: ''
+      }
       this.$refs.deptForm.resetFields()
       this.$emit('update:showDialog', false)
     },
