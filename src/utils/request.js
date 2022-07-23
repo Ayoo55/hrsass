@@ -31,9 +31,9 @@ error => {
 })
 // 响应拦截器
 service.interceptors.response.use(
-  // 相应成功
+  // 响应成功
   response => {
-    // 结构三个数据，因为 axios 默认在数据外层加了 data
+    // 解构三个数据，因为 axios 默认在数据外层加了 data
     const { success, message, data } = response.data
     // 如何 success 为true，说明响应成功，则返回响应的 data 数据
     if (success) {
