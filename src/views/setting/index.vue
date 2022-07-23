@@ -5,7 +5,7 @@
         <el-tab-pane label="角色管理" name="first">
           <!-- 表格 -->
           <el-row style="height:60px">
-            <el-button icon="el-icon-plus" type="primary" size="small">新增角色</el-button>
+            <el-button icon="el-icon-plus" type="primary" size="small" @click="showDialog=true">新增角色</el-button>
           </el-row>
           <el-table
             border=""
@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole, addRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -163,12 +163,20 @@ export default {
     },
     // 编辑角色
     async editRole(value) {
-      // 获取角色信息
+      // 获取角色信息,填充到弹层表单中
       this.roleForm = await getRoleDetail(value.id)
       this.showDialog = true
     },
+    // 点击 X 和取消，包括弹层关闭的 close 事件
     btnCancel() {
       this.showDialog = false
+      // 清空表单内容
+      this.roleForm = {
+        name: '',
+        description: ''
+      }
+      // 移除校验结果
+      this.$refs.roleForm.resetFields()
     },
     async btnOK() {
       try {
@@ -177,7 +185,7 @@ export default {
         if (this.roleForm.id) {
           await updateRole(this.roleForm)
         } else {
-          console.log('add')
+          await addRole(this.roleForm)
         }
         this.getRoleList()
         this.$message.success('操作成功')
