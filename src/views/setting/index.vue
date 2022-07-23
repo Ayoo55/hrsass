@@ -34,7 +34,7 @@
             >
               <template slot-scope="{row}">
                 <el-button size="small" type="success">分配权限</el-button>
-                <el-button size="small" type="primary">编辑</el-button>
+                <el-button size="small" type="primary" @click.native="editRole(row)">编辑</el-button>
                 <el-button size="small" type="danger" @click.native="deleteRole(row)">删除</el-button>
               </template>
 
@@ -80,11 +80,29 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+
+    <!-- 弹层组件 -->
+    <el-dialog title="编辑角色" :visible="showDialog" @close="btnCancel">
+      <el-form ref="roleForm" label-width="120px" :model="roleForm" :rules="rules">
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="roleForm.name" />
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="roleForm.description" />
+        </el-form-item>
+      </el-form>
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button size="small" @click="btnCancel">取消</el-button>
+          <el-button size="small" type="primary" @click="btnOK">确定</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -96,7 +114,17 @@ export default {
         total: 0
       },
       list: [],
-      formDate: {}
+      formDate: {},
+      showDialog: false,
+      roleForm: {
+        name: '',
+        description: ''
+      },
+      rules: {
+        name: [
+          { required: true, trigger: 'blur', message: '角色名称不能为空' }
+        ]
+      }
     }
   },
   computed: {
@@ -132,7 +160,33 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    // 编辑角色
+    async editRole(value) {
+      // 获取角色信息
+      this.roleForm = await getRoleDetail(value.id)
+      this.showDialog = true
+    },
+    btnCancel() {
+      this.showDialog = false
+    },
+    async btnOK() {
+      try {
+        await this.$refs.roleForm.validate()
+        // 如果 roleForm 如果有 ID，则处于编辑状态，否则为新增
+        if (this.roleForm.id) {
+          await updateRole(this.roleForm)
+        } else {
+          console.log('add')
+        }
+        this.getRoleList()
+        this.$message.success('操作成功')
+        this.showDialog = false
+      } catch (error) {
+        console.log(error)
+      }
     }
+
   }
 
 }
