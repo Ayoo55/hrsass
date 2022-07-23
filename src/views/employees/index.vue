@@ -18,8 +18,17 @@
           <el-table-column prop="workNumber" label="工号" sortable="" />
           <el-table-column prop="formOfEmployment" :formatter="formatEmployment" label="聘用形式" sortable="" />
           <el-table-column prop="departmentName" label="部门" sortable="" />
-          <el-table-column prop="timeOfEntry" label="入职时间" sortable="" />
-          <el-table-column prop="enableState" label="账户状态" sortable="" />
+          <el-table-column label="入职时间" sortable="">
+            <template slot-scope="{row}">
+              {{ row.timeOfEntry | formatDate }}
+            </template>
+          </el-table-column>
+          <el-table-column label="账户状态" sortable="">
+            <template slot-scope="{row}">
+              <el-switch :value="row.formOfEmployment === 1" />
+              <!-- {{ row. }} -->
+            </template>
+          </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -73,6 +82,7 @@ export default {
       this.page.total = list.total
       this.list = list.rows
       this.loading = false
+      console.log(this.list)
     },
     // 更改页码
     changePage(newPage) {
