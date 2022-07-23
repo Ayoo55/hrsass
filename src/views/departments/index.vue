@@ -14,11 +14,13 @@
             :tree-node="data"
             @delDepts="getDepartments"
             @addDepts="addDepts"
+            @editDepts="editDepts"
           />
         </el-tree>
       </el-card>
 
       <AddDept
+        ref="addDept"
         :show-dialog.sync="showDialog"
         :tree-node="node"
         @addDepts="getDepartments"
@@ -60,9 +62,20 @@ export default {
       this.company = { name: data.companyName, manager: '负责人', id: '' }
       this.departs = tranListToTreeData(data.depts, '')
     },
+    // 新增部门
     addDepts(node) {
       this.showDialog = true
       this.node = node
+    },
+    // 编辑部门
+    editDepts(node) {
+      // 弹层显示
+      this.showDialog = true
+      // 记录当前点击的节点
+      this.node = node
+      // 弹层内部填充当前节点信息，父组件调用子组件，获取详情
+      // 在调用**编辑方法** **`editDepts`**中通过**`ref`**调用**`add-dept.vue`**的实例方法
+      this.$refs.addDept.getDepartDetail(node.id)
     }
   }
 }

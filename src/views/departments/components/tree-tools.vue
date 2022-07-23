@@ -64,7 +64,7 @@ export default {
         // 在当前点击的部分下添加子部门，this.treeNode就是当前部门
         this.$emit('addDepts', this.treeNode)
       } else if (type === 'edit') {
-        console.log('edit')
+        this.$emit('editDepts', this.treeNode)
       } else {
         this.$confirm('确定要删除该部门吗？').then(() => {
           return delDepartments(this.treeNode.id)

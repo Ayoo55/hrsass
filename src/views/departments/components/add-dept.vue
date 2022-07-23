@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { getDepartments, addDepartments } from '@/api/departments'
+import { getDepartments, addDepartments, getDepartDetail } from '@/api/departments'
 import { getEmployeeSimple } from '@/api/employees'
 export default {
 
@@ -118,6 +118,7 @@ export default {
       this.peoples = await getEmployeeSimple()
       console.log(this.peoples)
     },
+    // 确定
     async btnOK() {
       // 点击确定，手动校验表单
       this.$refs.deptForm.validate(async isOK => {
@@ -130,9 +131,14 @@ export default {
         }
       })
     },
+    // 取消
     btnCancel() {
       this.$refs.deptForm.resetFields()
       this.$emit('update:showDialog', false)
+    },
+    // 获取部门详细信息，将获取的信息填充进表单
+    async getDepartDetail(id) {
+      this.formDate = await getDepartDetail(id)
     }
   }
 }
