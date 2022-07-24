@@ -12,14 +12,16 @@
           <el-date-picker v-model="formData.timeOfEntry" placeholder="请输入入职时间" style="width:50%" />
         </el-form-item>
         <el-form-item label="聘用形式" prop="formOfEmployment">
-          <el-input v-model="formData.formOfEmployment" placeholder="请输入聘用形式" style="width:50%" />
+          <el-select v-model="formData.formOfEmployment" style="width:50%" placeholder="请选择">
+            <el-option v-for="item in EmployeeEnum.hireType" :key="item.id" :label="item.value" :value="item.id" />
+          </el-select>
         </el-form-item>
         <el-form-item label="工号" prop="workNumber">
           <el-input v-model="formData.workNumber" placeholder="请输入工号" style="width:50%" />
         </el-form-item>
         <el-form-item label="部门" prop="departmentName">
           <el-input v-model="formData.departmentName" placeholder="请输入部门" style="width:50%" @focus="getDepartments" />
-          <el-tree v-if="showTree" v-loading="loading" default-expand-all="true" :data="treeData" :props="{label:'name'}" />
+          <el-tree v-if="showTree" v-loading="loading" default-expand-all="true" :data="treeData" :props="{label:'name'}" @node-click="selectNode" />
         </el-form-item>
         <el-form-item label="转正时间" prop="correctionTime">
           <el-date-picker v-model="formData.correctionTime" placeholder="请输入转正时间" style="width:50%" />
@@ -41,6 +43,7 @@
 <script>
 import { tranListToTreeData } from '@/utils'
 import { getDepartments } from '@/api/departments'
+import EmployeeEnum from '@/api/constant/employees'
 export default {
 
   name: 'AddEmployee',
@@ -56,6 +59,7 @@ export default {
 
   data() {
     return {
+      EmployeeEnum,
       list: [],
       formData: {
         username: '',
@@ -101,6 +105,10 @@ export default {
       const { depts } = await getDepartments()
       this.treeData = tranListToTreeData(depts, '')
       this.loading = false
+    },
+    selectNode(node) {
+      this.formData.departmentName = node.name
+      this.showTree = false
     }
   }
 }
