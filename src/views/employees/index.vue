@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <div class="app-container">
       <PageTools :show-before="true">
-        <span slot="before">共16条记录</span>
+        <span slot="before">共{{ page.total }}条记录</span>
         <template v-slot:after>
           <el-button size="small" type="success">Excel导入</el-button>
           <el-button size="small" type="danger">Excel导出</el-button>

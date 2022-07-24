@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-dialog title="新增员工" :visible="showDialog">
-      <el-form label-width="120px" :data="list" :model="formData" :rules="rules">
+    <el-dialog title="新增员工" :visible="showDialog" @close="btnCancel">
+      <el-form ref="addEmployee" label-width="120px" :data="list" :model="formData" :rules="rules">
         <el-form-item label="姓名" prop="username">
           <el-input v-model="formData.username" placeholder="请输入姓名" style="width:50%" />
         </el-form-item>
@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item label="聘用形式" prop="formOfEmployment">
           <el-select v-model="formData.formOfEmployment" style="width:50%" placeholder="请选择">
-            <el-option v-for="item in EmployeeEnum.hireType" :key="item.id" :label="item.value" :value="item.id" />
+            <el-option v-for="item in EmployeeEnum.hireType" :key="item.id" :label="item.id" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="工号" prop="workNumber">
@@ -30,8 +30,8 @@
       <template v-slot:footer>
         <el-row type="flex" justify="center">
           <el-col :span="6">
-            <el-button size="small">取消</el-button>
-            <el-button type="primary" size="small">确定</el-button>
+            <el-button size="small" @click="btnCancel">取消</el-button>
+            <el-button type="primary" size="small" @click="btnOK">确定</el-button>
           </el-col>
         </el-row>
       </template>
@@ -44,6 +44,7 @@
 import { tranListToTreeData } from '@/utils'
 import { getDepartments } from '@/api/departments'
 import EmployeeEnum from '@/api/constant/employees'
+import { addEmployee } from '@/api/employees'
 export default {
 
   name: 'AddEmployee',
@@ -109,6 +110,30 @@ export default {
     selectNode(node) {
       this.formData.departmentName = node.name
       this.showTree = false
+    },
+    btnCancel() {
+      this.formData = {
+        username: '',
+        mobile: '',
+        formOfEmployment: '',
+        workNumber: '',
+        departmentName: '',
+        timeOfEntry: '',
+        correctionTime: ''
+      }
+      this.$refs.addEmployee.resetFields()
+      this.$emit('update:showDialog', false)
+    },
+    async btnOK() {
+      try {
+        // 手动校验表单
+        await this.$refs.addEmployee.validate()
+        await addEmployee(this.formData)
+        this.$parent.getEmployeeList()
+        this.$parent.showDialog = false
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
