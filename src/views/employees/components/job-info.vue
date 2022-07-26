@@ -160,7 +160,7 @@
 
 <script>
 import EmployeeEnum from '@/api/constant/employees'
-
+import { getJobDetail, updateJob, getEmployeeSimple } from '@/api/employees'
 export default {
   data() {
     return {
@@ -195,6 +195,22 @@ export default {
         workingCity: '', // 工作城市
         workingTimeForTheFirstTime: '' // 首次参加工作时间
       }
+    }
+  },
+  created() {
+    this.getJobDetail()
+    this.getEmployeeSimple()
+  },
+  methods: {
+    async getJobDetail() {
+      this.formData = await getJobDetail(this.userId)
+    },
+    async saveJob() {
+      await updateJob(this.formData)
+      this.$message.success('保存用户岗位信息成功')
+    },
+    async getEmployeeSimple() {
+      this.depts = await getEmployeeSimple()
     }
   }
 }
