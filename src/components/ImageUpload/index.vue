@@ -6,6 +6,10 @@
       action="#"
       :on-preview="preview"
       :file-list="fileList"
+      :class="{disabled: fileComputed }"
+      :on-remove="handleRemove"
+      :before-upload="beforeUpload"
+      :http-request="upload"
     >
       <i class="el-icon-plus" />
     </el-upload>
@@ -17,6 +21,11 @@
 </template>
 
 <script>
+import COS from 'cos-js-sdk-v5'
+const cos = new COS({
+  SecretId: 'AKIDf7JFuIQItDG3ZolSs2wax3sQikVzHJ4Y',
+  SecretKey: 'FEwOZyA9sMaXEfpiMlqjMmxsWt0vaz94'
+})
 export default {
 
   name: '',
@@ -33,7 +42,11 @@ export default {
     }
   },
 
-  computed: {},
+  computed: {
+    fileComputed() {
+      return this.fileList.length === 1
+    }
+  },
 
   watch: {},
 
@@ -44,10 +57,43 @@ export default {
       this.showDialog = true
       this.imgUrl = file.url
       console.log(file)
+    },
+    handleRemove(file, fileList) {
+      this.fileList = fileList
+    },
+    beforeUpload(file) {
+      const types = ['image/jpeg', 'image/gif', 'image/bmp', 'image/png']
+      if (!types.some(item => item === file.type)) {
+        this.$message.error('上传图片只能是 JPG、GIF、BMP、PNG 格式!')
+        return false // 上传终止
+      }
+      const maxSize = 5 * 1024 * 1024
+      if (file.size > maxSize) {
+        this.$message.error('图片大小最大不能超过5M')
+        return false // 上传终止
+      }
+      return true
+    },
+    upload(params) {
+      console.log(params)
+      //   执行上传操作
+      if (params.file) {
+        cos.putObject({
+          Bucket: 'picture-1313084847',
+          Region: 'ap-nanjing',
+          Key: params.file.name,
+          Body: params.file,
+          StorageClass: 'STANDARD'
+        }, function(err, data) {
+          console.log(err || data)
+        })
+      }
     }
   }
 }
 </script>
-<style lang='less' scoped>
-
+<style>
+.disabled .el-upload--picture-card{
+    display:none;
+}
 </style>
