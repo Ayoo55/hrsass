@@ -287,6 +287,7 @@
 import EmployeeEnum from '@/api/constant/employees'
 import { getUserDetailById } from '@/api/user'
 import { getPersonalDetail, saveUserDetailById, updatePersonal } from '@/api/employees'
+import { file } from '@babel/types'
 export default {
   data() {
     return {
@@ -365,22 +366,32 @@ export default {
   methods: {
     async getUserDetailById() {
       this.userInfo = await getUserDetailById(this.userId)
-      if (this.userInfo.staffPhoto) {
+      if (this.userInfo.staffPhoto && this.userInfo.staffPhoto.trim()) {
         this.$refs.staffPhoto.fileList = [{ url: this.userInfo.staffPhoto, upload: true }]
       }
     },
     async getPersonalDetail() {
       this.formData = await getPersonalDetail(this.userId)
-      if (this.formData.staffPhoto) {
+      if (this.formData.staffPhoto && this.formData.staffPhoto.trim()) {
         this.$refs.myStaffPhoto.fileList = [{ url: this.formData.staffPhoto, upload: true }]
       }
     },
     async saveUser() {
-      await saveUserDetailById(this.userInfo)
+      const fileList = this.$refs.staffPhoto.fileList
+      if (fileList.some(item => !item.upload)) {
+        this.$message.warning('此时还有图片为上传完成')
+        return
+      }
+      await saveUserDetailById({ ...this.userInfo, staffPhoto: fileList && fileList.length ? fileList[0].url : ' ' })
       this.$message.success('保存用户基本信息成功')
     },
     async savePersonal() {
-      await updatePersonal(this.formData)
+      const fileList = this.$refs.myStaffPhoto.fileList
+      if (fileList.some(item => !item.upload)) {
+        this.$message.warning('此时还有图片为上传完成')
+        return
+      }
+      await updatePersonal({ ...this.formData, staffPhoto: fileList && fileList.length ? fileList[0].url : ' ' })
       this.$message.success('保存用户基础信息成功')
     }
   }
