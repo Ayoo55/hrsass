@@ -287,7 +287,6 @@
 import EmployeeEnum from '@/api/constant/employees'
 import { getUserDetailById } from '@/api/user'
 import { getPersonalDetail, saveUserDetailById, updatePersonal } from '@/api/employees'
-import { file } from '@babel/types'
 export default {
   data() {
     return {
