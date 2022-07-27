@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="分配角色" :visible="showRoleDialog">
+    <el-dialog title="分配角色" :visible="showRoleDialog" @close="btnCancel">
       <el-checkbox-group v-model="roleIds">
         <!-- 多选框 -->
         <el-checkbox v-for="item in list" :key="item.id" :label="item.id">
@@ -9,8 +9,8 @@
       </el-checkbox-group>
       <el-row slot="footer" type="flex" justify="center">
         <el-col :span="6">
-          <el-button type="primary" size="small">确定</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button type="primary" size="small" @click="btnOK">确定</el-button>
+          <el-button size="small" @click="btnCancel">取消</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -20,6 +20,7 @@
 <script>
 import { getRoleList } from '@/api/setting'
 import { getUserDetailById } from '@/api/user'
+import { assignRoles } from '@/api/employees'
 export default {
 
   name: '',
@@ -61,7 +62,19 @@ export default {
     async getUserDetailById(id) {
       const { roleIds } = await getUserDetailById(id)
       this.roleIds = roleIds
-      console.log('a', this.roleIds)
+    },
+    // 给员工分配角色
+    async btnOK() {
+      await assignRoles({
+        id: this.userId,
+        roleIds: this.roleIds
+      })
+      this.$emit('update:showRoleDialog', false)
+    },
+    // 取消
+    btnCancel() {
+      this.roleIds = []
+      this.$emit('update:showRoleDialog', false)
     }
   }
 }

@@ -181,9 +181,9 @@ export default {
         this.$message.warning('该用户还未上传头像')
       }
     },
-    editRole(id) {
+    async editRole(id) {
       this.userId = id
-      this.$refs.assignRole.getUserDetailById(id)
+      await this.$refs.assignRole.getUserDetailById(id)
       this.showRoleDialog = true
     }
 
