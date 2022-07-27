@@ -33,7 +33,7 @@
               label="操作"
             >
               <template slot-scope="{row}">
-                <el-button size="small" type="success">分配权限</el-button>
+                <el-button size="small" type="success" @click="assignPerm(row.id)">分配权限</el-button>
                 <el-button size="small" type="primary" @click.native="editRole(row)">编辑</el-button>
                 <el-button size="small" type="danger" @click.native="deleteRole(row)">删除</el-button>
               </template>
@@ -98,12 +98,32 @@
         </el-col>
       </el-row>
     </el-dialog>
+    <el-dialog :visible="showPermDialog" title="分配权限">
+      <el-tree
+        node-key="idd"
+        :default-checked-keys="selectCheck"
+        :check-strictly="true"
+        :show-checkbox="true"
+        :data="permData"
+        :props="defaultProps"
+        :default-expand-all="true"
+      />
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button type="primary" size="small" @click="btnPermOK">确定</el-button>
+          <el-button size="small" @click="btnPermCancel">取消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole, addRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
+import { getPermissionList } from '@/api/permisson'
+import { tranListToTreeData } from '@/utils'
 export default {
   data() {
     return {
@@ -124,7 +144,14 @@ export default {
         name: [
           { required: true, trigger: 'blur', message: '角色名称不能为空' }
         ]
-      }
+      },
+      showPermDialog: false, // 分配权限
+      permData: [],
+      defaultProps: {
+        label: 'name'
+      },
+      roleId: null,
+      selectCheck: []
     }
   },
   computed: {
@@ -193,6 +220,19 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    // 分配权限
+    async assignPerm(id) {
+      this.permData = tranListToTreeData(await getPermissionList(), '0')
+      const { permIds } = await getRoleDetail(id)
+      this.selectCheck = permIds
+      this.showPermDialog = true
+    },
+    btnPermOK() {
+
+    },
+    btnPermCancel() {
+
     }
 
   }
