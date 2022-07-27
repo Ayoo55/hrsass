@@ -7,7 +7,7 @@ import router from '@/router'
 const service = axios.create({
   // 在开发环境中，获取到的是 /api ，会开一个反向代理
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 5000
+  timeout: 50000
 })
 const TimeOut = 3600
 
