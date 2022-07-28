@@ -24,7 +24,9 @@
           <div slot="header" class="header">
             <span>工作日历</span>
           </div>
-        <!-- 放置日历组件 -->
+          <!-- 放置日历组件 -->
+          <WorkCalendar />
+
         </el-card>
         <!-- 公告 -->
         <el-card class="box-card">
@@ -83,7 +85,8 @@
           <div slot="header" class="header">
             <span>绩效指数</span>
           </div>
-        <!-- 放置雷达图 -->
+          <!-- 放置雷达图 -->
+          <Radar />
         </el-card>
         <!-- 帮助连接 -->
         <el-card class="box-card">
@@ -119,8 +122,10 @@
 </template>
 
 <script>
+import WorkCalendar from './components/work-calendar.vue'
 import { mapGetters } from 'vuex'
 import { createNamespacedHelpers } from 'vuex'
+import Radar from './components/radar.vue'
 const { mapState } = createNamespacedHelpers('user')
 export default {
   name: 'Dashboard',
@@ -135,6 +140,10 @@ export default {
       'staffPhoto'
     ]),
     ...mapState(['userInfo'])
+  },
+  components: {
+    WorkCalendar,
+    Radar
   }
 }
 </script>
