@@ -73,10 +73,10 @@
             <span>流程申请</span>
           </div>
           <div class="sideNav">
-            <el-button class="sideBtn">加班离职</el-button>
+            <el-button class="sideBtn" @click="showDialog=true">加班离职</el-button>
             <el-button class="sideBtn">请假调休</el-button>
-            <el-button class="sideBtn">审批列表</el-button>
-            <el-button class="sideBtn">我的信息</el-button>
+            <el-button class="sideBtn" @click="$router.push('/users/approvals')">审批列表</el-button>
+            <el-button class="sideBtn" @click="$router.push('/users/info')">我的信息</el-button>
           </div>
         </el-card>
 
@@ -118,10 +118,27 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-dialog :visible="showDialog" title="离职申请" @close="btnCancel">
+      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="120px">
+        <el-form-item label="期望离职时间" prop="exceptTime">
+          <el-date-picker v-model="ruleForm.exceptTime" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" />
+        </el-form-item>
+        <el-form-item prop="reason" label="离职原因">
+          <el-input v-model="ruleForm.reason" type="textarea" :rows="3" style="width:70%" />
+        </el-form-item>
+      </el-form>
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button size="small" type="primary" @click="btnOK">确定</el-button>
+          <el-button size="small" @click="btnCancel">取消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { startProcess } from '@/api/approvals'
 import WorkCalendar from './components/work-calendar.vue'
 import { mapGetters } from 'vuex'
 import { createNamespacedHelpers } from 'vuex'
@@ -129,9 +146,24 @@ import Radar from './components/radar.vue'
 const { mapState } = createNamespacedHelpers('user')
 export default {
   name: 'Dashboard',
+  components: {
+    WorkCalendar,
+    Radar
+  },
   data() {
     return {
-      defaultImg: require('@/assets/common/bigUserHeader.png')
+      defaultImg: require('@/assets/common/bigUserHeader.png'),
+      showDialog: false,
+      ruleForm: {
+        exceptTime: '',
+        reason: '',
+        processKey: 'process_dimission', // 特定的审批
+        processName: '离职'
+      },
+      rules: {
+        exceptTime: [{ trigger: 'blur', required: true, message: '离职时间不能为空' }],
+        reason: [{ trigger: 'blur', required: true, message: '离职原因不能为空' }]
+      }
     }
   },
   computed: {
@@ -141,9 +173,28 @@ export default {
     ]),
     ...mapState(['userInfo'])
   },
-  components: {
-    WorkCalendar,
-    Radar
+
+  methods: {
+    btnCancel() {
+      this.showDialog = false
+      this.ruleForm = {
+        exceptTime: '',
+        reason: '',
+        processKey: 'process_dimission', // 特定的审批
+        processName: '离职'
+      }
+      this.$refs.ruleForm.resetFields()
+    },
+    btnOK() {
+      this.$refs.ruleForm.validate(async validate => {
+        if (validate) {
+          const data = { ...this.ruleForm, userId: this.userInfo.userId }
+          await startProcess(data)
+          this.$message.success('提交流程成功')
+          this.btnCancel()
+        }
+      })
+    }
   }
 }
 </script>
