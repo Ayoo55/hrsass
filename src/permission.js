@@ -17,10 +17,13 @@ router.beforeEach(async function(to, from, next) {
       // 如果已有用户ID，则不需要再次获取用户信息
       if (!store.state.user.userInfo.userId) {
         // 如果没有用户ID，则调用store下的子模块的 actions，用 dispatch
-        await store.dispatch('user/getUserInfo')
-        console.log()
+        const { roles } = await store.dispatch('user/getUserInfo')
+        const routes = await store.dispatch('permission/filterRoutes', roles.menus)
+        router.addRoutes(routes)
+        next(to.path)
+      } else {
+        next() // 直接放行
       }
-      next() // 直接放行
     }
   } else {
     if (whiteList.indexOf(to.path) > -1) {
