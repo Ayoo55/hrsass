@@ -19,7 +19,7 @@ router.beforeEach(async function(to, from, next) {
         // 如果没有用户ID，则调用store下的子模块的 actions，用 dispatch
         const { roles } = await store.dispatch('user/getUserInfo')
         const routes = await store.dispatch('permission/filterRoutes', roles.menus)
-        router.addRoutes(routes)
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }])
         next(to.path)
       } else {
         next() // 直接放行
