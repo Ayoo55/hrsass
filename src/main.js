@@ -19,6 +19,7 @@ import '@/permission' // permission control
 import * as directives from '@/directives'
 import * as filters from '@/filters' // 引入工具类
 import Component from '@/components'
+import CheckPermission from '@/mixin/checkPermission'
 
 Object.keys(directives).forEach(key => {
   Vue.directive(key, directives[key])
@@ -34,6 +35,9 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 Vue.use(Component)
+
+Vue.mixin(CheckPermission)
+
 Vue.config.productionTip = false
 
 new Vue({
