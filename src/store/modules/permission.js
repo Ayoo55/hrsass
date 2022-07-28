@@ -4,7 +4,7 @@ const state = {
 }
 const mutations = {
   setRoutes(state, newRoutes) {
-    state.routes = [...constantRoutes, ...state.routes]
+    state.routes = [...constantRoutes, ...newRoutes]
   }
 }
 // 筛选路由

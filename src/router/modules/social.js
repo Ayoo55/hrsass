@@ -1,7 +1,7 @@
 import Layout from '@/layout'
 export default {
   path: '/social', // 路由地址
-  name: 'social',
+  name: 'social_securitys',
   component: Layout,
   children: [{
     path: '', // 二级路由的默认路由
