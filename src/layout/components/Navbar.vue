@@ -9,6 +9,7 @@
 
     <div class="right-menu">
       <ScreenFull class="right-menu-item" />
+      <ThemePicker class="right-menu-item" />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-imagerror="defalutImg" :src="staffPhoto" class="user-avatar">
