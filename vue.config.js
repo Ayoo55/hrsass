@@ -14,7 +14,28 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
-
+let cdn = { css: [], js: [] }
+let externals = {}
+const isProd = process.env.NODE_ENV === 'production'
+if (isProd) {
+  // 处于生产模式
+  externals = {
+    'vue': 'Vue',
+    'element-ui': 'ELEMENT',
+    'xlsx': 'XLSX'
+  }
+  cdn = {
+    css: [
+      'https://unpkg.com/element-ui/lib/theme-chalk/index.css' // 提前引入elementUI样式
+    ], // 放置css文件目录
+    js: [
+      'https://unpkg.com/vue/dist/vue.js', // vuejs
+      'https://unpkg.com/element-ui/lib/index.js', // element
+      'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/xlsx.full.min.js', // xlsx 相关
+      'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/jszip.min.js' // xlsx 相关
+    ] // 放置js文件目录
+  }
+}
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -53,7 +74,9 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
+    externals: externals
+
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
@@ -66,6 +89,11 @@ module.exports = {
         include: 'initial'
       }
     ])
+
+    config.plugin('html').tap(args => {
+      args[0].cdn = cdn
+      return args
+    })
 
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
