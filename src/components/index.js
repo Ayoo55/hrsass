@@ -4,6 +4,7 @@ import ImageUpload from './ImageUpload'
 import Print from 'vue-print-nb'
 import ScreenFull from './ScreenFull'
 import ThemePicker from './ThemePicker'
+import Lang from './lang'
 export default {
   install(Vue) {
     Vue.component('PageTools', PageTools)
@@ -11,6 +12,7 @@ export default {
     Vue.component('ImageUpload', ImageUpload)
     Vue.component('ScreenFull', ScreenFull)
     Vue.component('ThemePicker', ThemePicker)
+    Vue.component('Lang', Lang)
     Vue.use(Print)
   }
 }

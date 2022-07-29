@@ -6,6 +6,7 @@ export default {
   component: Layout,
   children: [{
     path: '', // 二级路由的默认路由
+    name: 'employees',
     component: () => import('@/views/employees'),
     meta: {
       title: '员工管理',

@@ -5,6 +5,7 @@ export default {
   component: Layout,
   children: [{
     path: '', // 二级路由的默认路由
+    name: 'permissions',
     component: () => import('@/views/permission'),
     meta: {
       title: '权限管理',
